@@ -13,7 +13,6 @@ import { CardComponent } from '../../ui/card/card.component';
   template: `
     <app-card
       [list]="students"
-      [type]="cardType"
       (add)="addStudent()"
       (delete)="deleteStudent($event)"
       customClass="bg-light-green">

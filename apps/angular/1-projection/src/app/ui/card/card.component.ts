@@ -1,6 +1,5 @@
 import { NgFor } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CardType } from '../../model/card.model';
 import { ListItemComponent } from '../list-item/list-item.component';
 
 @Component({
@@ -31,13 +30,10 @@ import { ListItemComponent } from '../list-item/list-item.component';
 })
 export class CardComponent {
   @Input() list: any[] | null = null;
-  @Input() type!: CardType;
   @Input() customClass = '';
 
   @Output() add = new EventEmitter<void>();
   @Output() delete = new EventEmitter<number>();
-
-  CardType = CardType;
 
   addNewItem() {
     this.add.emit();
