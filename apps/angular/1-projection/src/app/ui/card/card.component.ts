@@ -1,5 +1,5 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { randStudent, randTeacher } from '../../data-access/fake-http.service';
 import { StudentStore } from '../../data-access/student.store';
 import { TeacherStore } from '../../data-access/teacher.store';
@@ -26,7 +26,7 @@ import { ListItemComponent } from '../list-item/list-item.component';
           *ngFor="let item of list"
           [name]="item.firstName"
           [id]="item.id"
-          [type]="type"></app-list-item>
+          (delete)="deleteOne($event)"></app-list-item>
       </section>
 
       <button
@@ -44,6 +44,8 @@ export class CardComponent {
   @Input() type!: CardType;
   @Input() customClass = '';
 
+  @Output() delete = new EventEmitter<number>();
+
   CardType = CardType;
 
   constructor(
@@ -57,5 +59,9 @@ export class CardComponent {
     } else if (this.type === CardType.STUDENT) {
       this.studentStore.addOne(randStudent());
     }
+  }
+
+  deleteOne(id: number) {
+    this.delete.emit(id);
   }
 }

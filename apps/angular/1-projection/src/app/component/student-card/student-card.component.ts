@@ -11,6 +11,7 @@ import { CardComponent } from '../../ui/card/card.component';
     <app-card
       [list]="students"
       [type]="cardType"
+      (delete)="deleteOne($event)"
       customClass="bg-light-green"></app-card>
   `,
   standalone: true,
@@ -36,5 +37,9 @@ export class StudentCardComponent implements OnInit {
     this.http.fetchStudents$.subscribe((s) => this.store.addAll(s));
 
     this.store.students$.subscribe((s) => (this.students = s));
+  }
+
+  deleteOne(id: number) {
+    this.store.deleteOne(id);
   }
 }
