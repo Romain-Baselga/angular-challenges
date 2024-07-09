@@ -9,10 +9,12 @@ import { TodoApiService } from './services/todo-api.service';
   imports: [CommonModule],
   selector: 'app-root',
   template: `
-    <div *ngFor="let todo of todos">
-      {{ todo.title }}
-      <button (click)="update(todo)">Update</button>
-    </div>
+    @for (todo of todos; track todo.id) {
+      <div>
+        {{ todo.title }}
+        <button (click)="update(todo)">Update</button>
+      </div>
+    }
   `,
   styles: [],
 })
