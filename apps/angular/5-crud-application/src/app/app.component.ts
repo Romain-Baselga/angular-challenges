@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { randText } from '@ngneat/falso';
 import { Todo } from './model/todo.model';
+import { TodoApiService } from './services/todo-api.service';
 
 @Component({
   standalone: true,
@@ -19,31 +19,19 @@ import { Todo } from './model/todo.model';
 export class AppComponent implements OnInit {
   todos!: Todo[];
 
-  constructor(private http: HttpClient) {}
+  constructor(private todoApiService: TodoApiService) {}
 
   ngOnInit(): void {
-    this.http
-      .get<Todo[]>('https://jsonplaceholder.typicode.com/todos')
-      .subscribe((todos) => {
-        this.todos = todos;
-      });
+    this.todoApiService.fetch().subscribe((todos) => {
+      this.todos = todos;
+    });
   }
 
   update(todo: Todo) {
     todo.title = randText();
 
-    this.http
-      .put<Todo>(
-        `https://jsonplaceholder.typicode.com/todos/${todo.id}`,
-        todo,
-        {
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-          },
-        },
-      )
-      .subscribe((todoUpdated: Todo) => {
-        this.todos[todoUpdated.id - 1] = todoUpdated;
-      });
+    this.todoApiService.update(todo).subscribe((todoUpdated: Todo) => {
+      this.todos[todoUpdated.id - 1] = todoUpdated;
+    });
   }
 }
