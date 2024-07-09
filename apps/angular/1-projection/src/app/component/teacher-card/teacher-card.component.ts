@@ -16,7 +16,9 @@ import { CardComponent } from '../../ui/card/card.component';
       [type]="cardType"
       (add)="addTeacher()"
       (delete)="deleteTeacher($event)"
-      customClass="bg-light-red"></app-card>
+      customClass="bg-light-red">
+      <img src="assets/img/teacher.png" width="200px" />
+    </app-card>
   `,
   styles: [
     `

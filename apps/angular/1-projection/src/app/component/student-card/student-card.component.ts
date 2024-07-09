@@ -16,7 +16,9 @@ import { CardComponent } from '../../ui/card/card.component';
       [type]="cardType"
       (add)="addStudent()"
       (delete)="deleteStudent($event)"
-      customClass="bg-light-green"></app-card>
+      customClass="bg-light-green">
+      <img src="assets/img/student.webp" width="200px" />
+    </app-card>
   `,
   standalone: true,
   styles: [
