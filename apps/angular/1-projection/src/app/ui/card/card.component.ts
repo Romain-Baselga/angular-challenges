@@ -1,5 +1,6 @@
 import { NgFor } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CardData } from '../../model/card.model';
 import { ListItemComponent } from '../list-item/list-item.component';
 
 @Component({
@@ -13,7 +14,7 @@ import { ListItemComponent } from '../list-item/list-item.component';
       <section>
         <app-list-item
           *ngFor="let item of list"
-          [name]="item.firstName"
+          [name]="item.name"
           [id]="item.id"
           (delete)="deleteOne($event)"></app-list-item>
       </section>
@@ -29,7 +30,7 @@ import { ListItemComponent } from '../list-item/list-item.component';
   imports: [NgFor, ListItemComponent],
 })
 export class CardComponent {
-  @Input() list: any[] | null = null;
+  @Input() list: CardData[] | null = null;
   @Input() customClass = '';
 
   @Output() add = new EventEmitter<void>();

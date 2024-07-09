@@ -1,18 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Observable, map } from 'rxjs';
 import {
   FakeHttpService,
   randStudent,
 } from '../../data-access/fake-http.service';
 import { StudentStore } from '../../data-access/student.store';
-import { CardType } from '../../model/card.model';
-import { Student } from '../../model/student.model';
+import { CardData } from '../../model/card.model';
 import { CardComponent } from '../../ui/card/card.component';
 
 @Component({
   selector: 'app-student-card',
   template: `
     <app-card
-      [list]="students"
+      [list]="cardData$ | async"
       (add)="addStudent()"
       (delete)="deleteStudent($event)"
       customClass="bg-light-green">
@@ -27,11 +28,12 @@ import { CardComponent } from '../../ui/card/card.component';
       }
     `,
   ],
-  imports: [CardComponent],
+  imports: [CardComponent, AsyncPipe],
 })
 export class StudentCardComponent implements OnInit {
-  students: Student[] = [];
-  cardType = CardType.STUDENT;
+  cardData$: Observable<CardData[]> = this.store.students$.pipe(
+    map((students) => students.map((s) => ({ id: s.id, name: s.lastName }))),
+  );
 
   constructor(
     private http: FakeHttpService,
@@ -39,9 +41,11 @@ export class StudentCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.http.fetchStudents$.subscribe((s) => this.store.addAll(s));
+    this.fetchStudents();
+  }
 
-    this.store.students$.subscribe((s) => (this.students = s));
+  private fetchStudents() {
+    this.http.fetchStudents$.subscribe((s) => this.store.addAll(s));
   }
 
   addStudent() {
