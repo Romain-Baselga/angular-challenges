@@ -16,18 +16,11 @@ import { CardComponent } from '../../ui/card/card.component';
       [list]="cardData$ | async"
       (add)="addStudent()"
       (delete)="deleteStudent($event)"
-      customClass="bg-light-green">
+      backgroundColor="rgba(0, 250, 0, 0.1)">
       <img src="assets/img/student.webp" width="200px" />
     </app-card>
   `,
   standalone: true,
-  styles: [
-    `
-      ::ng-deep .bg-light-green {
-        background-color: rgba(0, 250, 0, 0.1);
-      }
-    `,
-  ],
   imports: [CardComponent, AsyncPipe],
 })
 export class StudentCardComponent implements OnInit {

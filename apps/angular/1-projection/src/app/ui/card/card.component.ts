@@ -8,7 +8,7 @@ import { ListItemComponent } from '../list-item/list-item.component';
   template: `
     <div
       class="flex w-fit flex-col gap-3 rounded-md border-2 border-black p-4"
-      [class]="customClass">
+      style="background-color: {{ backgroundColor }};">
       <ng-content></ng-content>
 
       <section>
@@ -31,7 +31,7 @@ import { ListItemComponent } from '../list-item/list-item.component';
 })
 export class CardComponent {
   @Input() list: CardData[] | null = null;
-  @Input() customClass = '';
+  @Input() backgroundColor = '';
 
   @Output() add = new EventEmitter<void>();
   @Output() delete = new EventEmitter<number>();
