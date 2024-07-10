@@ -1,15 +1,17 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { randText } from '@ngneat/falso';
+import { provideComponentStore } from '@ngrx/component-store';
 import { Todo } from './model/todo.model';
-import { TodoApiService } from './services/todo-api.service';
+import { TodoStore } from './services/todo.store';
 
 @Component({
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AsyncPipe],
+  providers: [provideComponentStore(TodoStore)],
   selector: 'app-root',
   template: `
-    @for (todo of todos; track todo.id) {
+    @for (todo of todos$ | async; track todo.id) {
       <div>
         {{ todo.title }}
         <button (click)="update(todo)">Update</button>
@@ -18,22 +20,13 @@ import { TodoApiService } from './services/todo-api.service';
   `,
   styles: [],
 })
-export class AppComponent implements OnInit {
-  todos!: Todo[];
+export class AppComponent {
+  todos$ = this.todoStore.todos$;
 
-  constructor(private todoApiService: TodoApiService) {}
-
-  ngOnInit(): void {
-    this.todoApiService.fetch().subscribe((todos) => {
-      this.todos = todos;
-    });
-  }
+  constructor(private todoStore: TodoStore) {}
 
   update(todo: Todo) {
     todo.title = randText();
-
-    this.todoApiService.update(todo).subscribe((todoUpdated: Todo) => {
-      this.todos[todoUpdated.id - 1] = todoUpdated;
-    });
+    this.todoStore.update(todo);
   }
 }
