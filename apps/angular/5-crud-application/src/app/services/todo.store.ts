@@ -1,43 +1,27 @@
-import { Injectable } from '@angular/core';
-import { ComponentStore, OnStateInit } from '@ngrx/component-store';
-import { map } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 import { Todo } from '../model/todo.model';
 import { TodoApiService } from './todo-api.service';
 
-export interface TodoState {
-  todos: Todo[];
-}
-
-const initialState: TodoState = { todos: [] };
-
 @Injectable()
-export class TodoStore
-  extends ComponentStore<TodoState>
-  implements OnStateInit
-{
-  readonly todos$ = this.select((state) => state.todos).pipe(
-    map((todos) => todos.sort((a, b) => a.id - b.id)),
-  );
+export class TodoStore {
+  readonly todos = signal<Todo[]>([]);
 
-  constructor(private todoApiService: TodoApiService) {
-    super(initialState);
-  }
-
-  ngrxOnStateInit() {
-    this.refresh();
-  }
+  constructor(private todoApiService: TodoApiService) {}
 
   refresh() {
     this.todoApiService.fetch().subscribe((todos) => {
-      this.setState({ todos: todos });
+      this.todos.set(todos);
     });
   }
 
   update(todo: Todo) {
-    this._update(this.todoApiService.update(todo));
+    this.todoApiService.update(todo).subscribe((updatedTodo) => {
+      this.todos.update((oldTodos) => {
+        return [
+          ...oldTodos.filter((t) => t.id !== updatedTodo.id),
+          updatedTodo,
+        ];
+      });
+    });
   }
-
-  private _update = this.updater((state, todo: Todo) => ({
-    todos: [...state.todos.filter((t) => t.id !== todo.id), todo],
-  }));
 }
