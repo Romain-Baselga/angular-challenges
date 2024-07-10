@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { randText } from '@ngneat/falso';
 import { Todo } from './model/todo.model';
 import { TodoStore } from './services/todo.store';
@@ -18,6 +18,7 @@ import { TodoStore } from './services/todo.store';
     }
   `,
   styles: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
   todos = this.todoStore.todos;
@@ -29,7 +30,7 @@ export class AppComponent implements OnInit {
   }
 
   update(todo: Todo) {
-    todo.title = randText();
-    this.todoStore.update(todo);
+    const newTodo: Todo = { ...todo, title: randText() };
+    this.todoStore.update(newTodo);
   }
 }
