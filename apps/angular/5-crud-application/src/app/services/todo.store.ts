@@ -24,4 +24,10 @@ export class TodoStore {
       });
     });
   }
+
+  delete(todo: Todo) {
+    this.todoApiService.delete(todo).subscribe(() => {
+      this.todos.update((oldTodos) => oldTodos.filter((t) => t.id !== todo.id));
+    });
+  }
 }
