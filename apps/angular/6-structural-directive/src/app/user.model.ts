@@ -31,7 +31,7 @@ export const reader: User = {
 };
 
 export const readerAndWriter: User = {
-  name: 'reader',
+  name: 'readerAndWriter',
   isAdmin: false,
   roles: ['READER', 'WRITER'],
 };
@@ -43,7 +43,7 @@ export const client: User = {
 };
 
 export const everyone: User = {
-  name: 'client',
+  name: 'everyone',
   isAdmin: false,
   roles: [],
 };

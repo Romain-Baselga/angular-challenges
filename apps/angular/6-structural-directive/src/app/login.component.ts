@@ -20,13 +20,15 @@ import { UserStore } from './user.store';
   template: `
     <header class="flex items-center gap-3">
       Log as :
-      <button app-button (click)="admin()">Admin</button>
-      <button app-button (click)="manager()">Manager</button>
-      <button app-button (click)="reader()">Reader</button>
-      <button app-button (click)="writer()">Writer</button>
-      <button app-button (click)="readerWriter()">Reader and Writer</button>
-      <button app-button (click)="client()">Client</button>
-      <button app-button (click)="everyone()">Everyone</button>
+      <button app-button (click)="changeUserToAdmin()">Admin</button>
+      <button app-button (click)="changeUserToManager()">Manager</button>
+      <button app-button (click)="changeUserToReader()">Reader</button>
+      <button app-button (click)="changeUserToWriter()">Writer</button>
+      <button app-button (click)="changeUserToReaderWriter()">
+        Reader and Writer
+      </button>
+      <button app-button (click)="changeUserToClient()">Client</button>
+      <button app-button (click)="changeUserToEveryone()">Everyone</button>
     </header>
 
     <app-information></app-information>
@@ -39,25 +41,25 @@ import { UserStore } from './user.store';
 export class LoginComponent {
   constructor(private userStore: UserStore) {}
 
-  admin() {
-    this.userStore.add(admin);
+  changeUserToAdmin() {
+    this.userStore.changeToUser(admin);
   }
-  manager() {
-    this.userStore.add(manager);
+  changeUserToManager() {
+    this.userStore.changeToUser(manager);
   }
-  reader() {
-    this.userStore.add(reader);
+  changeUserToReader() {
+    this.userStore.changeToUser(reader);
   }
-  writer() {
-    this.userStore.add(writer);
+  changeUserToWriter() {
+    this.userStore.changeToUser(writer);
   }
-  readerWriter() {
-    this.userStore.add(readerAndWriter);
+  changeUserToReaderWriter() {
+    this.userStore.changeToUser(readerAndWriter);
   }
-  client() {
-    this.userStore.add(client);
+  changeUserToClient() {
+    this.userStore.changeToUser(client);
   }
-  everyone() {
-    this.userStore.add(everyone);
+  changeUserToEveryone() {
+    this.userStore.changeToUser(everyone);
   }
 }

@@ -7,9 +7,9 @@ import { User } from './user.model';
 })
 export class UserStore {
   private user = new BehaviorSubject<User | undefined>(undefined);
-  user$ = this.user.asObservable();
+  readonly user$ = this.user.asObservable();
 
-  add(user: User) {
+  changeToUser(user: User) {
     this.user.next(user);
   }
 }
