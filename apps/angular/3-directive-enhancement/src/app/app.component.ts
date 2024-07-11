@@ -1,25 +1,32 @@
-import { NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-interface Person {
-  name: string;
-}
+import { NgForEmptyDirective } from './ngForEmpty.directive';
 
 @Component({
   standalone: true,
-  imports: [NgFor, NgIf],
+  imports: [NgForEmptyDirective],
   selector: 'app-root',
   template: `
-    <ng-container *ngIf="persons.length > 0; else emptyList">
-      <div *ngFor="let person of persons">
-        {{ person.name }}
-      </div>
-    </ng-container>
+    <div>
+      <button (click)="addNumber()">add</button>
+      <button (click)="removeNumber()">remove</button>
+    </div>
+
+    <div *appNgForEmpty="let number of numbers; empty: emptyList">
+      the numberis: {{ number }}
+    </div>
     <ng-template #emptyList>The list is empty !!</ng-template>
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  persons: Person[] = [];
+  numbers: number[] = [];
+
+  addNumber(): void {
+    this.numbers.push(Math.ceil(Math.random() * 1000));
+  }
+
+  removeNumber() {
+    this.numbers.pop();
+  }
 }
