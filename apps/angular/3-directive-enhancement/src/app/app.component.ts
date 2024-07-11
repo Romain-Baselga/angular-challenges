@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgForEmptyDirective } from './ngForEmpty.directive';
+import { CustomNgForDirective } from './customNgForEmpty.directive';
 
 @Component({
   standalone: true,
-  imports: [NgForEmptyDirective],
+  imports: [CustomNgForDirective],
   selector: 'app-root',
   template: `
     <div>
@@ -11,7 +11,7 @@ import { NgForEmptyDirective } from './ngForEmpty.directive';
       <button (click)="removeNumber()">remove</button>
     </div>
 
-    <div *appNgForEmpty="let number of numbers; empty: emptyList">
+    <div *ngFor="let number of numbers; empty: emptyList">
       the numberis: {{ number }}
     </div>
     <ng-template #emptyList>The list is empty !!</ng-template>
