@@ -1,11 +1,17 @@
 import { Component } from '@angular/core';
+import { TIMER_PERIOD } from './time-token';
 import { TimerContainerComponent } from './timer-container.component';
-import { TimerService } from './timer.service';
 
 @Component({
   selector: 'app-phone',
   standalone: true,
   imports: [TimerContainerComponent],
+  providers: [
+    {
+      provide: TIMER_PERIOD,
+      useValue: 2000,
+    },
+  ],
   template: `
     <div class="flex gap-2">
       Phone Call Timer:
@@ -14,8 +20,4 @@ import { TimerService } from './timer.service';
     <timer-container />
   `,
 })
-export default class PhoneComponent {
-  constructor(private timerService: TimerService) {
-    this.timerService.period = 2000;
-  }
-}
+export default class PhoneComponent {}

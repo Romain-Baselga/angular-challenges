@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { TIMER_PERIOD } from './time-token';
 import { TimerComponent } from './timer.component';
-import { TimerService } from './timer.service';
 @Component({
   selector: 'timer-container',
   standalone: true,
@@ -17,6 +17,6 @@ import { TimerService } from './timer.service';
   },
 })
 export class TimerContainerComponent {
-  constructor(private timerService: TimerService) {}
-  timer = this.timerService.period;
+  constructor(private injector: Injector) {}
+  timer = this.injector.get(TIMER_PERIOD);
 }

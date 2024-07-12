@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TimerService } from './timer.service';
+import { interval } from 'rxjs';
+import { TIMER_PERIOD } from './time-token';
 
 @Component({
   selector: 'timer',
@@ -10,7 +11,6 @@ import { TimerService } from './timer.service';
   `,
 })
 export class TimerComponent {
-  constructor(private timerService: TimerService) {}
-
-  timer = toSignal(this.timerService.timer$);
+  constructor(private injector: Injector) {}
+  timer = toSignal(interval(this.injector.get(TIMER_PERIOD)));
 }
