@@ -13,14 +13,14 @@ interface MenuItem {
   standalone: true,
   imports: [RouterLink, RouterLinkActive, NgFor],
   template: `
-    <ng-container *ngFor="let menu of menus">
+    @for (menu of menus; track $index) {
       <a
         class="rounded-md border px-4 py-2"
         [routerLink]="menu.path"
         routerLinkActive="isSelected">
         {{ menu.name }}
       </a>
-    </ng-container>
+    }
   `,
   styles: [
     `
