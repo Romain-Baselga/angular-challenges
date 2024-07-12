@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TimerContainerComponent } from './timer-container.component';
+import { TimerService } from './timer.service';
 
 @Component({
   selector: 'app-video',
@@ -13,4 +14,8 @@ import { TimerContainerComponent } from './timer-container.component';
     <timer-container />
   `,
 })
-export default class VideoComponent {}
+export default class VideoComponent {
+  constructor(private timerService: TimerService) {
+    this.timerService.period = 1000;
+  }
+}

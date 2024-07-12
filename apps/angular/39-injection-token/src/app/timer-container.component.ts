@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { DEFAULT_TIMER } from './data';
 import { TimerComponent } from './timer.component';
+import { TimerService } from './timer.service';
 @Component({
   selector: 'timer-container',
   standalone: true,
@@ -17,5 +17,6 @@ import { TimerComponent } from './timer.component';
   },
 })
 export class TimerContainerComponent {
-  timer = DEFAULT_TIMER;
+  constructor(private timerService: TimerService) {}
+  timer = this.timerService.period;
 }
