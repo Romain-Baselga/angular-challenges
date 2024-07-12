@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogComponent } from '../dialog/dialog.component';
+import { DialogSimpleComponent } from '../dialog/dialog-simple.component';
 
 @Component({
   standalone: true,
@@ -10,12 +10,11 @@ import { DialogComponent } from '../dialog/dialog.component';
   templateUrl: './simple-action.component.html',
 })
 export class SimpleActionComponent {
-  readonly #dialog = inject(MatDialog);
+  constructor(private dialog: MatDialog) {}
 
   openDialog(): void {
-    this.#dialog.open(DialogComponent, {
+    this.dialog.open(DialogSimpleComponent, {
       width: '250px',
-      closeOnNavigation: false,
     });
   }
 }
