@@ -15,6 +15,7 @@ export class SimpleActionComponent {
   openDialog(): void {
     this.#dialog.open(DialogComponent, {
       width: '250px',
+      closeOnNavigation: false,
     });
   }
 }

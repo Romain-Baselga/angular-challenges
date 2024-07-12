@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -7,6 +7,8 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
+import { DialogService } from './dialog.service';
 
 @Component({
   selector: 'app-dialog-dialog',
@@ -22,5 +24,16 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogComponent {
-  readonly dialogRef = inject(MatDialogRef<DialogComponent>);
+  constructor(
+    private dialogRef: MatDialogRef<DialogComponent>,
+    private dialogService: DialogService,
+  ) {
+    firstValueFrom(this.dialogRef.afterOpened()).then(() => {
+      this.dialogService.isDialogOpen = true;
+    });
+
+    firstValueFrom(this.dialogRef.afterClosed()).then(() => {
+      this.dialogService.isDialogOpen = false;
+    });
+  }
 }
