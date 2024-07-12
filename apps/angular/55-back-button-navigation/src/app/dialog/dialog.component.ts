@@ -28,6 +28,10 @@ export class DialogComponent {
     private dialogRef: MatDialogRef<DialogComponent>,
     private dialogService: DialogService,
   ) {
+    firstValueFrom(this.dialogService.dialogShouldBeClose).then(() => {
+      this.dialogRef.close();
+    });
+
     firstValueFrom(this.dialogRef.afterOpened()).then(() => {
       this.dialogService.isDialogOpen = true;
     });
