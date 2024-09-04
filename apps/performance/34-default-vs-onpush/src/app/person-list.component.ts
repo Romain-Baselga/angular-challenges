@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { CDFlashingDirective } from '@angular-challenges/shared/directives';
 import { CommonModule } from '@angular/common';
@@ -52,6 +52,7 @@ import { MatListModule } from '@angular/material/list';
   host: {
     class: 'w-full flex flex-col items-center',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonListComponent {
   @Input() names: string[] = [];
