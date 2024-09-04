@@ -16,8 +16,9 @@ import { RatingControlComponent } from '../rating-control/rating-control.compone
 })
 export class FeedbackFormComponent {
   @Output()
-  readonly feedBackSubmit: EventEmitter<Record<string, string | null>> =
-    new EventEmitter<Record<string, string | null>>();
+  readonly feedBackSubmit: EventEmitter<
+    Record<string, string | number | null>
+  > = new EventEmitter<Record<string, string | number | null>>();
 
   readonly feedbackForm = new FormGroup({
     name: new FormControl('', {
@@ -27,14 +28,14 @@ export class FeedbackFormComponent {
       validators: Validators.required,
     }),
     comment: new FormControl(),
+    rating: new FormControl(0, {
+      validators: [Validators.max(5), Validators.min(1), Validators.required],
+    }),
   });
-
-  rating: string | null = null;
 
   submitForm(): void {
     this.feedBackSubmit.emit({
       ...this.feedbackForm.value,
-      rating: this.rating,
     });
 
     this.feedbackForm.reset();

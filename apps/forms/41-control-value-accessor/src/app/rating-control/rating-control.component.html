@@ -5,12 +5,9 @@
   </symbol>
 </svg>
 <div class="rating">
-  @for (item of [].constructor(5); track item) {
-    <svg
-      class="star"
-      [class.star-active]="isStarActive($index, value)"
-      (click)="setRating($index)">
-      <use xlink:href="#star"></use>
-    </svg>
+  @for (rating of [1,2,3,4,5]; track rating;) {
+  <svg class="star" [class.star-active]="currentRating >= rating" (click)="setRating(rating)">
+    <use xlink:href="#star"></use>
+  </svg>
   }
 </div>
