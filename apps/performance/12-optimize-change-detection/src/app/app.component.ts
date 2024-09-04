@@ -1,6 +1,7 @@
 import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Component, DestroyRef, NgZone, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { distinctUntilChanged, fromEvent, map } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -10,7 +11,7 @@ import { BehaviorSubject } from 'rxjs';
     <div>Top</div>
     <div>Middle</div>
     <div>Bottom</div>
-    <button (click)="goToTop()" *ngIf="displayButton$ | async">Top</button>
+    <button (click)="goToTop()" *ngIf="displayButton">Top</button>
   `,
   styles: [
     `
@@ -31,16 +32,29 @@ import { BehaviorSubject } from 'rxjs';
     `,
   ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'scroll-cd';
+  displayButton = false;
 
-  private displayButtonSubject = new BehaviorSubject<boolean>(false);
-  displayButton$ = this.displayButtonSubject.asObservable();
+  constructor(
+    private destroyRef: DestroyRef,
+    private ngZone: NgZone,
+  ) {}
 
-  @HostListener('window:scroll', ['$event'])
-  onScroll() {
-    const pos = window.pageYOffset;
-    this.displayButtonSubject.next(pos > 50);
+  ngOnInit(): void {
+    this.ngZone.runOutsideAngular(() => {
+      fromEvent(window, 'scroll')
+        .pipe(
+          map(() => window.scrollY > 50),
+          distinctUntilChanged(),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe((value) => {
+          this.ngZone.run(() => {
+            this.displayButton = value;
+          });
+        });
+    });
   }
 
   goToTop() {
