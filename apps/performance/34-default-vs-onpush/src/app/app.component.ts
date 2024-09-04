@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { randFirstName } from '@ngneat/falso';
-import { PersonListComponent } from './person-list.component';
+import { PersonComponent } from './person.component';
 import { RandomComponent } from './random.component';
 
 @Component({
   standalone: true,
-  imports: [PersonListComponent, RandomComponent],
+  imports: [RandomComponent, PersonComponent],
   selector: 'app-root',
   template: `
     <app-random />
 
     <div class="flex">
-      <app-person-list [names]="girlList" title="Female" />
-      <app-person-list [names]="boyList" title="Male" />
+      <app-person [names]="girlList" title="Female" />
+      <app-person [names]="boyList" title="Male" />
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
