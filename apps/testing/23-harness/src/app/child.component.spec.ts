@@ -11,13 +11,51 @@ import { ChildComponent } from './child.component';
 describe('ChildComponent', () => {
   let loader: HarnessLoader;
 
-  beforeEach(() => {
+  let slider: MatSliderHarness;
+
+  let forwardButton: MatButtonHarness;
+  let backwardButton: MatButtonHarness;
+
+  let disableCheckbox: MatCheckboxHarness;
+
+  let stepInput: MatInputHarness;
+  let maxValueInput: MatInputHarness;
+
+  async function getSliderValue(): Promise<number> {
+    return (await slider.getEndThumb()).getValue();
+  }
+
+  async function setSliderValue(value: number): Promise<void> {
+    await (await slider.getEndThumb()).setValue(value);
+  }
+
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule],
     });
 
     const fixture = TestBed.createComponent(ChildComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
+
+    slider = await loader.getHarness(MatSliderHarness);
+
+    forwardButton = await loader.getHarness(
+      MatButtonHarness.with({ selector: '#slider-forward-button' }),
+    );
+    backwardButton = await loader.getHarness(
+      MatButtonHarness.with({ selector: '#slider-backward-button' }),
+    );
+
+    disableCheckbox = await loader.getHarness(
+      MatCheckboxHarness.with({ selector: '#disable-checkbox' }),
+    );
+
+    stepInput = await loader.getHarness(
+      MatInputHarness.with({ selector: '#input-step' }),
+    );
+    maxValueInput = await loader.getHarness(
+      MatInputHarness.with({ selector: '#input-max' }),
+    );
   });
 
   describe('When init', () => {
@@ -36,21 +74,13 @@ describe('ChildComponent', () => {
     });
 
     test('Then initial value of slider thumb is 0', async () => {
-      const slider = await loader.getHarness(MatSliderHarness);
-      const sliderValue: number = await (await slider.getEndThumb()).getValue();
-
-      expect(sliderValue).toEqual(0);
+      expect(await getSliderValue()).toEqual(0);
     });
   });
 
   describe('Given maxValue set to 109', () => {
     test('Then slider max value is 109', async () => {
-      const maxValueInput = await loader.getHarness(
-        MatInputHarness.with({ selector: '#input-max' }),
-      );
       maxValueInput.setValue('109');
-
-      const slider = await loader.getHarness(MatSliderHarness);
 
       expect(await slider.getMaxValue()).toBe(109);
     });
@@ -58,48 +88,31 @@ describe('ChildComponent', () => {
 
   describe('When disabled checkbox is toggled', () => {
     test('Then slider is disabled', async () => {
-      const disableCheckbox = await loader.getHarness(
-        MatCheckboxHarness.with({ selector: '#disable-checkbox' }),
-      );
       await disableCheckbox.check();
 
-      const slider = await loader.getHarness(MatSliderHarness);
       expect(await slider.isDisabled()).toBe(true);
     });
   });
 
   describe('Given step value set to 5, and When clicking on forward button two times', () => {
     test('Then thumb value is 10', async () => {
-      const stepInput = await loader.getHarness(
-        MatInputHarness.with({ selector: '#input-step' }),
-      );
       await stepInput.setValue('5');
 
-      const forwardButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '#slider-forward-button' }),
-      );
       await forwardButton.click();
       await forwardButton.click();
 
-      const slider = await loader.getHarness(MatSliderHarness);
-      const sliderValue: number = await (await slider.getEndThumb()).getValue();
-
-      expect(sliderValue).toEqual(10);
+      expect(await getSliderValue()).toEqual(10);
     });
   });
 
   describe('Given slider value set to 5, and step value to 6 and When clicking on back button', () => {
     test('Then slider value is still 5', async () => {
-      const slider = await loader.getHarness(MatSliderHarness);
-      await (await slider.getEndThumb()).setValue(5);
-
-      const stepInput = await loader.getHarness(
-        MatInputHarness.with({ selector: '#input-step' }),
-      );
+      await setSliderValue(5);
       await stepInput.setValue('6');
 
-      const sliderValue: number = await (await slider.getEndThumb()).getValue();
-      expect(sliderValue).toEqual(5);
+      await backwardButton.click();
+
+      expect(await getSliderValue()).toEqual(5);
     });
   });
 });
