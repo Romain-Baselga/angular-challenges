@@ -10,7 +10,7 @@ import { Component } from '@angular/core';
       id="agree"
       type="checkbox"
       [value]="check"
-      (input)="toggleCheck()" />
+      (click)="toggleCheck()" />
     <button
       class="ml-10 rounded-lg border p-2"
       [class.bg-gray-500]="!check"
