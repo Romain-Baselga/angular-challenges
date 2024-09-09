@@ -43,7 +43,7 @@ describe('AppComponent', () => {
       await userEvent.type(searchBar, 'Hobbit');
       await userEvent.click(borrowButton);
 
-      expect(await screen.findByRole('listitem')).toHaveLength(1);
+      expect(await screen.findAllByRole('listitem')).toHaveLength(1);
       expect(await screen.findByText(/The Hobbit/i)).toBeInTheDocument();
     });
   });
@@ -53,7 +53,7 @@ describe('AppComponent', () => {
       await userEvent.type(searchBar, 'HOBBIT');
       await userEvent.click(borrowButton);
 
-      expect(await screen.findByRole('listitem')).toHaveLength(1);
+      expect(await screen.findAllByRole('listitem')).toHaveLength(1);
       expect(await screen.findByText(/The Hobbit/i)).toBeInTheDocument();
     });
   });
@@ -63,7 +63,7 @@ describe('AppComponent', () => {
       await userEvent.type(searchBar, 'George Orwell');
       await userEvent.click(borrowButton);
 
-      expect(await screen.findByRole('listitem')).toHaveLength(2);
+      expect(await screen.findAllByRole('listitem')).toHaveLength(2);
       expect(await screen.findByText(/1984/i)).toBeInTheDocument();
       expect(await screen.findByText(/Animal Farm/i)).toBeInTheDocument();
     });
