@@ -17,7 +17,7 @@ import { UserService } from './user.service';
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 ">
           <option selected>Please choose an user</option>
           @for (user of users; track $index) {
-            <option value="{{ user }}">{{ user }}</option>
+            <option [value]="user">{{ user }}</option>
           }
         </select>
       </form>

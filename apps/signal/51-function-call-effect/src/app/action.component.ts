@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from './user.service';
@@ -24,7 +25,7 @@ import { UserService } from './user.service';
         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500">
         <option selected>Please select an action</option>
         @for (action of actions; track $index) {
-          <option value="{{ action }}">{{ action }}</option>
+          <option [value]="action">{{ action }}</option>
         }
       </select>
     </form>
@@ -39,7 +40,10 @@ export class ActionsComponent {
 
   constructor() {
     effect(() => {
-      this.userService.log(this.action() ?? 'No action selected');
+      const actionToLog: string = this.action() ?? 'No action selected';
+      untracked(() => {
+        this.userService.log(actionToLog);
+      });
     });
   }
 }
