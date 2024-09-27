@@ -33,7 +33,7 @@ import { UserComponent } from './user.component';
       <app-user
         [name]="name.value"
         [lastName]="lastName.value"
-        [age]="age.value" />
+        [age]="+age.value" />
     }
   `,
   host: {
