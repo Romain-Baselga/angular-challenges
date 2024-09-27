@@ -41,11 +41,30 @@ export class AppComponent {
   gpu = model(false);
 
   constructor() {
-    /* 
-      Explain for your junior team mate why this bug occurs ...
-    */
+    /**
+     * I don't work because: "effects keep track of their dependencies dynamically, and only track signals which were read in the most recent execution."
+     * if drive is selected, then it will not track ram and gpu (so we can check without alert)
+     */
+    // effect(() => {
+    //   if (this.drive() || this.ram() || this.gpu()) {
+    //     alert('Price increased!');
+    //   }
+    // });
+
     effect(() => {
-      if (this.drive() || this.ram() || this.gpu()) {
+      if (this.drive()) {
+        alert('Price increased!');
+      }
+    });
+
+    effect(() => {
+      if (this.ram()) {
+        alert('Price increased!');
+      }
+    });
+
+    effect(() => {
+      if (this.gpu()) {
         alert('Price increased!');
       }
     });
