@@ -8,21 +8,20 @@ export const selectStatuses = createSelector(
   selectUser,
   selectActivities,
   (user, activities) => {
-    if (user?.isAdmin) {
-      return activities.reduce((status: Status[], activity): Status[] => {
-        const index = status.findIndex((s) => s.name === activity.type);
-        if (index === -1) {
-          return [
-            ...status,
-            { name: activity.type, teachers: [activity.teacher] },
-          ];
-        } else {
-          status[index].teachers.push(activity.teacher);
-          return status;
-        }
-      }, []);
+    if (!user?.isAdmin) {
+      return [];
     }
-    return [];
+
+    const statuses: Status[] = [];
+    activities.forEach((activity) => {
+      const status = statuses.find((s) => s.name === activity.type);
+      if (status) {
+        status.teachers.push(activity.teacher);
+      } else {
+        statuses.push({ name: activity.type, teachers: [activity.teacher] });
+      }
+    });
+    return statuses;
   },
 );
 
