@@ -9,7 +9,6 @@ import { Store } from '@ngrx/store';
 import { loadActivities } from './store/activity/activity.actions';
 import { ActivityType } from './store/activity/activity.model';
 import { selectActivities } from './store/activity/activity.selectors';
-import { loadStatuses } from './store/status/status.actions';
 import { selectAllTeachersByActivityType } from './store/status/status.selectors';
 import { loadUsers } from './store/user/user.actions';
 
@@ -64,7 +63,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch(loadActivities());
     this.store.dispatch(loadUsers());
-    this.store.dispatch(loadStatuses());
   }
 
   getAllTeachersForActivityType$ = (type: ActivityType) =>
