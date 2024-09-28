@@ -12,6 +12,6 @@ export const selectStatuses = createSelector(
 
 export const selectAllTeachersByActivityType = (name: ActivityType) =>
   createSelector(
-    selectStatusState,
-    (state) => state.statuses.find((s) => s.name == name)?.teachers ?? [],
+    selectStatuses,
+    (statuses) => statuses.find((s) => s.name == name)?.teachers ?? [],
   );
