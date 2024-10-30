@@ -7,7 +7,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLinkWithHref } from '@angular/router';
 import { LetDirective } from '@ngrx/component';
 import { provideComponentStore } from '@ngrx/component-store';
-import { debounceTime, distinctUntilChanged, skipWhile, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, first } from 'rxjs';
 import { Photo } from '../photo.model';
 import { PhotoStore } from './photos.store';
 
@@ -32,7 +32,7 @@ import { PhotoStore } from './photos.store';
       <input
         type="text"
         matInput
-        [formControl]="search"
+        [formControl]="searchForm"
         placeholder="find a photo" />
     </mat-form-field>
 
@@ -87,22 +87,18 @@ import { PhotoStore } from './photos.store';
 })
 export default class PhotosComponent implements OnInit {
   store = inject(PhotoStore);
-  readonly vm$ = this.store.vm$.pipe(
-    tap(({ search }) => {
-      if (!this.formInit) {
-        this.search.setValue(search);
-        this.formInit = true;
-      }
-    }),
-  );
 
-  private formInit = false;
-  search = new FormControl();
+  readonly vm$ = this.store.vm$;
+
+  searchForm = new FormControl();
 
   ngOnInit(): void {
+    this.store.vm$
+      .pipe(first())
+      .subscribe(({ search }) => this.searchForm.setValue(search));
+
     this.store.search(
-      this.search.valueChanges.pipe(
-        skipWhile(() => !this.formInit),
+      this.searchForm.valueChanges.pipe(
         debounceTime(300),
         distinctUntilChanged(),
       ),
