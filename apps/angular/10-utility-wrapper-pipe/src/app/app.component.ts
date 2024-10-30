@@ -1,18 +1,18 @@
 import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
-import { IsAllowedPipe, PersonUtils, ShowNamePipe } from './person.utils';
+import { PersonUtils, UtilsPipe } from './person.utils';
 
 @Component({
   standalone: true,
-  imports: [NgFor, ShowNamePipe, IsAllowedPipe],
+  imports: [NgFor, UtilsPipe],
   selector: 'app-root',
   template: `
     <div *ngFor="let activity of activities">
       {{ activity.name }} :
       <div
         *ngFor="let person of persons; let index = index; let isFirst = first">
-        {{ person.name | showNamePipe: index }}
-        {{ person.age | isAllowedPipe: isFirst : activity.minimumAge }}
+        {{ showName | utilsPipe: person.name : index }}
+        {{ isAllowed | utilsPipe: person.age : isFirst : activity.minimumAge }}
       </div>
     </div>
   `,

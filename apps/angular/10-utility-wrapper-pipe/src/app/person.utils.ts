@@ -21,21 +21,10 @@ export const PersonUtils = {
 @Pipe({
   pure: true,
   standalone: true,
-  name: 'showNamePipe',
+  name: 'utilsPipe',
 })
-export class ShowNamePipe implements PipeTransform {
-  transform(name: string, index: number): string {
-    return showName(name, index);
-  }
-}
-
-@Pipe({
-  pure: true,
-  standalone: true,
-  name: 'isAllowedPipe',
-})
-export class IsAllowedPipe implements PipeTransform {
-  transform(age: number, isFirst: boolean, activityAge: number): string {
-    return isAllowed(age, isFirst, activityAge);
+export class UtilsPipe implements PipeTransform {
+  transform(fn: (...args: any[]) => unknown, ...args: any[]) {
+    return fn(...args);
   }
 }
