@@ -1,5 +1,5 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,7 +8,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLinkWithHref } from '@angular/router';
 import { LetDirective } from '@ngrx/component';
 import { provideComponentStore } from '@ngrx/component-store';
-import { debounceTime, distinctUntilChanged, first } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Photo } from '../photo.model';
 import { PhotoStore } from './photos.store';
 
@@ -84,9 +84,7 @@ import { PhotoStore } from './photos.store';
     class: 'p-5 block',
   },
 })
-export default class PhotosComponent implements OnInit {
-  store = inject(PhotoStore);
-
+export default class PhotosComponent {
   readonly vm = toSignal(this.store.vm$, {
     initialValue: {
       photos: [],
@@ -99,19 +97,22 @@ export default class PhotosComponent implements OnInit {
     },
   });
 
-  searchForm = new FormControl();
+  searchForm = new FormControl(this.vm().search);
 
-  ngOnInit(): void {
-    this.store.vm$
-      .pipe(first())
-      .subscribe(({ search }) => this.searchForm.setValue(search));
+  private valueChange = toSignal(
+    this.searchForm.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+    ),
+  );
 
-    this.store.search(
-      this.searchForm.valueChanges.pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-      ),
-    );
+  constructor(public store: PhotoStore) {
+    effect(() => {
+      const newValue = this.valueChange();
+      if (newValue) {
+        this.store.search(newValue);
+      }
+    });
   }
 
   encode(photo: Photo) {
