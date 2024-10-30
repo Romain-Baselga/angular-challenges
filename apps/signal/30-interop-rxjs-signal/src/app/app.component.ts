@@ -8,6 +8,5 @@ import { RouterOutlet } from '@angular/router';
   template: `
     <router-outlet />
   `,
-  styles: [''],
 })
 export class AppComponent {}
