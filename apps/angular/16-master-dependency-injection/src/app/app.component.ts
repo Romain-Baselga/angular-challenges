@@ -12,6 +12,7 @@ interface ProductContext {
 @Directive({
   selector: 'ng-template[product]',
   standalone: true,
+  providers: [],
 })
 export class ProductDirective {
   static ngTemplateContextGuard(
@@ -22,33 +23,31 @@ export class ProductDirective {
   }
 }
 
-@Component({
+@Directive({
+  selector: '[productCode]',
   standalone: true,
-  selector: 'row',
-  template: `
-    <tr>
-      <td>{{ product.name }}</td>
-      <td>{{ product.priceA | currency | async }}</td>
-      <td>{{ product.priceB | currency | async }}</td>
-      <td>{{ product.priceC | currency | async }}</td>
-    </tr>
-  `,
-  imports: [CurrencyPipe, AsyncPipe],
   providers: [CurrencyService],
 })
-export class RowComponent implements OnInit {
-  @Input() product!: Product;
+export class ProductCodeDirective implements OnInit {
+  @Input() productCode!: string;
 
   constructor(private currencyService: CurrencyService) {}
 
   ngOnInit(): void {
-    this.currencyService.patchState({ code: this.product.currencyCode });
+    this.currencyService.patchState({ code: this.productCode });
   }
 }
 
 @Component({
   standalone: true,
-  imports: [TableComponent, NgFor, ProductDirective, RowComponent],
+  imports: [
+    TableComponent,
+    NgFor,
+    ProductDirective,
+    CurrencyPipe,
+    AsyncPipe,
+    ProductCodeDirective,
+  ],
   selector: 'app-root',
   template: `
     <table [items]="products">
@@ -60,7 +59,12 @@ export class RowComponent implements OnInit {
         </tr>
       </ng-template>
       <ng-template #body product let-product>
-        <row [product]="product"></row>
+        <tr [productCode]="product.currencyCode">
+          <td>{{ product.name }}</td>
+          <td>{{ product.priceA | currency | async }}</td>
+          <td>{{ product.priceB | currency | async }}</td>
+          <td>{{ product.priceC | currency | async }}</td>
+        </tr>
       </ng-template>
     </table>
   `,
