@@ -1,5 +1,6 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -36,49 +37,47 @@ import { PhotoStore } from './photos.store';
         placeholder="find a photo" />
     </mat-form-field>
 
-    <ng-container *ngrxLet="vm$ as vm">
-      <section class="flex flex-col">
-        <section class="flex items-center gap-3">
-          <button
-            [disabled]="vm.page === 1"
-            [class.bg-gray-400]="vm.page === 1"
-            class="rounded-md border p-3 text-xl"
-            (click)="store.previousPage()">
-            <
-          </button>
-          <button
-            [disabled]="vm.endOfPage"
-            [class.bg-gray-400]="vm.endOfPage"
-            class="rounded-md border p-3 text-xl"
-            (click)="store.nextPage()">
-            >
-          </button>
-          Page :{{ vm.page }} / {{ vm.pages }}
-        </section>
-
-        @if (vm.loading) {
-          <mat-progress-bar mode="query" class="mt-5"></mat-progress-bar>
-        }
-
-        @if (vm.photos && vm.photos.length > 0) {
-          <ul class="flex flex-wrap gap-4">
-            @for (photo of vm.photos; track photo.id) {
-              <li>
-                <a routerLink="detail" [queryParams]="{ photo: encode(photo) }">
-                  <img [src]="photo.url_q" [alt]="photo.title" class="image" />
-                </a>
-              </li>
-            }
-          </ul>
-        } @else {
-          <div>No Photos found. Type a search word.</div>
-        }
-
-        <footer class="text-red-500">
-          {{ vm.error }}
-        </footer>
+    <section class="flex flex-col">
+      <section class="flex items-center gap-3">
+        <button
+          [disabled]="vm().page === 1"
+          [class.bg-gray-400]="vm().page === 1"
+          class="rounded-md border p-3 text-xl"
+          (click)="store.previousPage()">
+          <
+        </button>
+        <button
+          [disabled]="vm().endOfPage"
+          [class.bg-gray-400]="vm().endOfPage"
+          class="rounded-md border p-3 text-xl"
+          (click)="store.nextPage()">
+          >
+        </button>
+        Page :{{ vm().page }} / {{ vm().pages }}
       </section>
-    </ng-container>
+
+      @if (vm().loading) {
+        <mat-progress-bar mode="query" class="mt-5"></mat-progress-bar>
+      }
+
+      @if (vm().photos && vm().photos.length > 0) {
+        <ul class="flex flex-wrap gap-4">
+          @for (photo of vm().photos; track photo.id) {
+            <li>
+              <a routerLink="detail" [queryParams]="{ photo: encode(photo) }">
+                <img [src]="photo.url_q" [alt]="photo.title" class="image" />
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <div>No Photos found. Type a search word.</div>
+      }
+
+      <footer class="text-red-500">
+        {{ vm().error }}
+      </footer>
+    </section>
   `,
   providers: [provideComponentStore(PhotoStore)],
   host: {
@@ -88,7 +87,17 @@ import { PhotoStore } from './photos.store';
 export default class PhotosComponent implements OnInit {
   store = inject(PhotoStore);
 
-  readonly vm$ = this.store.vm$;
+  readonly vm = toSignal(this.store.vm$, {
+    initialValue: {
+      photos: [],
+      search: '',
+      page: 1,
+      pages: 1,
+      endOfPage: false,
+      loading: false,
+      error: '',
+    },
+  });
 
   searchForm = new FormControl();
 
