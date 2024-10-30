@@ -55,25 +55,25 @@ import { PhotoStore } from './photos.store';
           </button>
           Page :{{ vm.page }} / {{ vm.pages }}
         </section>
-        <mat-progress-bar
-          mode="query"
-          *ngIf="vm.loading"
-          class="mt-5"></mat-progress-bar>
-        <ul
-          class="flex flex-wrap gap-4"
-          *ngIf="vm.photos && vm.photos.length > 0; else noPhoto">
-          <li *ngFor="let photo of vm.photos; trackBy: trackById">
-            <a routerLink="detail" [queryParams]="{ photo: encode(photo) }">
-              <img
-                src="{{ photo.url_q }}"
-                alt="{{ photo.title }}"
-                class="image" />
-            </a>
-          </li>
-        </ul>
-        <ng-template #noPhoto>
+
+        @if (vm.loading) {
+          <mat-progress-bar mode="query" class="mt-5"></mat-progress-bar>
+        }
+
+        @if (vm.photos && vm.photos.length > 0) {
+          <ul class="flex flex-wrap gap-4">
+            @for (photo of vm.photos; track photo.id) {
+              <li>
+                <a routerLink="detail" [queryParams]="{ photo: encode(photo) }">
+                  <img [src]="photo.url_q" [alt]="photo.title" class="image" />
+                </a>
+              </li>
+            }
+          </ul>
+        } @else {
           <div>No Photos found. Type a search word.</div>
-        </ng-template>
+        }
+
         <footer class="text-red-500">
           {{ vm.error }}
         </footer>
@@ -107,10 +107,6 @@ export default class PhotosComponent implements OnInit {
         distinctUntilChanged(),
       ),
     );
-  }
-
-  trackById(index: number, photo: Photo) {
-    return photo.id;
   }
 
   encode(photo: Photo) {
