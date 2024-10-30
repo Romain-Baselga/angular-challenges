@@ -17,6 +17,7 @@ export const PersonUtils = {
   showName,
   isAllowed,
 };
+type PersonUtilsType = typeof PersonUtils;
 
 @Pipe({
   pure: true,
@@ -24,7 +25,14 @@ export const PersonUtils = {
   name: 'utilsPipe',
 })
 export class UtilsPipe implements PipeTransform {
-  transform(fn: (...args: any[]) => unknown, ...args: any[]) {
-    return fn(...args);
+  transform<
+    FunctionName extends keyof PersonUtilsType,
+    SelectedFunction extends PersonUtilsType[FunctionName],
+  >(
+    functionName: FunctionName,
+    ...args: Parameters<SelectedFunction>
+  ): ReturnType<SelectedFunction> {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    return (PersonUtils[functionName] as Function)(...args);
   }
 }
