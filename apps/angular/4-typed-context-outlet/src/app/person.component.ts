@@ -1,5 +1,28 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ContentChild, Input, TemplateRef } from '@angular/core';
+import {
+  Component,
+  ContentChild,
+  Directive,
+  Input,
+  TemplateRef,
+} from '@angular/core';
+
+interface PersonContext {
+  name: string;
+  age: number;
+}
+
+@Directive({ standalone: true, selector: '[personTemplate]' })
+export class PersonTemplateDirective {
+  @Input({ required: true }) personTemplate!: Person;
+
+  static ngTemplateContextGuard(
+    dir: PersonTemplateDirective,
+    ctx: any,
+  ): ctx is PersonContext {
+    return true;
+  }
+}
 
 interface Person {
   name: string;
@@ -14,7 +37,7 @@ interface Person {
     <ng-container
       *ngTemplateOutlet="
         personTemplateRef || emptyRef;
-        context: { $implicit: person.name, age: person.age }
+        context: { name: person.name, age: person.age }
       "></ng-container>
 
     <ng-template #emptyRef>No Template</ng-template>
@@ -23,6 +46,6 @@ interface Person {
 export class PersonComponent {
   @Input() person!: Person;
 
-  @ContentChild('personRef', { read: TemplateRef })
-  personTemplateRef!: TemplateRef<unknown>;
+  @ContentChild(PersonTemplateDirective, { read: TemplateRef })
+  personTemplateRef!: TemplateRef<PersonContext>;
 }
