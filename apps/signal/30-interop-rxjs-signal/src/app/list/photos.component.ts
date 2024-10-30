@@ -40,29 +40,29 @@ import { PhotoStore } from './photos.store';
     <section class="flex flex-col">
       <section class="flex items-center gap-3">
         <button
-          [disabled]="vm().page === 1"
-          [class.bg-gray-400]="vm().page === 1"
+          [disabled]="state().page === 1"
+          [class.bg-gray-400]="state().page === 1"
           class="rounded-md border p-3 text-xl"
           (click)="store.previousPage()">
           <
         </button>
         <button
-          [disabled]="vm().endOfPage"
-          [class.bg-gray-400]="vm().endOfPage"
+          [disabled]="state().endOfPage"
+          [class.bg-gray-400]="state().endOfPage"
           class="rounded-md border p-3 text-xl"
           (click)="store.nextPage()">
           >
         </button>
-        Page :{{ vm().page }} / {{ vm().pages }}
+        Page :{{ state().page }} / {{ state().pages }}
       </section>
 
-      @if (vm().loading) {
+      @if (state().loading) {
         <mat-progress-bar mode="query" class="mt-5"></mat-progress-bar>
       }
 
-      @if (vm().photos && vm().photos.length > 0) {
+      @if (state().photos && state().photos.length > 0) {
         <ul class="flex flex-wrap gap-4">
-          @for (photo of vm().photos; track photo.id) {
+          @for (photo of state().photos; track photo.id) {
             <li>
               <a routerLink="detail" [queryParams]="{ photo: encode(photo) }">
                 <img [src]="photo.url_q" [alt]="photo.title" class="image" />
@@ -75,7 +75,7 @@ import { PhotoStore } from './photos.store';
       }
 
       <footer class="text-red-500">
-        {{ vm().error }}
+        {{ state().error }}
       </footer>
     </section>
   `,
@@ -85,19 +85,9 @@ import { PhotoStore } from './photos.store';
   },
 })
 export default class PhotosComponent {
-  readonly vm = toSignal(this.store.vm$, {
-    initialValue: {
-      photos: [],
-      search: '',
-      page: 1,
-      pages: 1,
-      endOfPage: false,
-      loading: false,
-      error: '',
-    },
-  });
+  readonly state = this.store.state;
 
-  searchForm = new FormControl(this.vm().search);
+  searchForm = new FormControl(this.state().search);
 
   private valueChange = toSignal(
     this.searchForm.valueChanges.pipe(
@@ -110,7 +100,7 @@ export default class PhotosComponent {
     effect(() => {
       const newValue = this.valueChange();
       if (newValue) {
-        this.store.search(newValue);
+        this.store.updateSearch(newValue);
       }
     });
   }

@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ComponentStore,
   OnStateInit,
@@ -9,6 +10,7 @@ import { pipe } from 'rxjs';
 import { filter, mergeMap, tap } from 'rxjs/operators';
 import { Photo } from '../photo.model';
 import { PhotoService } from '../photos.service';
+import { StoreInterface } from './storeInterface';
 
 const PHOTO_STATE_KEY = 'photo_search';
 
@@ -33,7 +35,7 @@ const initialState: PhotoState = {
 @Injectable()
 export class PhotoStore
   extends ComponentStore<PhotoState>
-  implements OnStoreInit, OnStateInit
+  implements OnStoreInit, OnStateInit, StoreInterface
 {
   private photoService = inject(PhotoService);
 
@@ -50,7 +52,7 @@ export class PhotoStore
     (page, pages) => page === pages,
   );
 
-  readonly vm$ = this.select(
+  private vm$ = this.select(
     {
       photos: this.photos$,
       search: this.search$,
@@ -62,6 +64,18 @@ export class PhotoStore
     },
     { debounce: true },
   );
+
+  state = toSignal(this.vm$, {
+    initialValue: {
+      photos: [],
+      search: '',
+      page: 1,
+      pages: 1,
+      endOfPage: false,
+      loading: false,
+      error: '',
+    },
+  });
 
   ngrxOnStoreInit() {
     const savedJSONState = localStorage.getItem(PHOTO_STATE_KEY);
@@ -86,7 +100,7 @@ export class PhotoStore
     );
   }
 
-  readonly search = this.updater(
+  readonly updateSearch = this.updater(
     (state, search: string): PhotoState => ({
       ...state,
       search,
