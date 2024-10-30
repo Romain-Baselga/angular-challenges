@@ -23,6 +23,6 @@ interface Person {
 export class PersonComponent {
   @Input() person!: Person;
 
-  @ContentChild('#personRef', { read: TemplateRef })
+  @ContentChild('personRef', { read: TemplateRef })
   personTemplateRef!: TemplateRef<unknown>;
 }
