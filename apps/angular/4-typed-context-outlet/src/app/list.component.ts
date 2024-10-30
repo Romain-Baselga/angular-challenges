@@ -3,9 +3,30 @@ import {
   ChangeDetectionStrategy,
   Component,
   ContentChild,
+  Directive,
   Input,
   TemplateRef,
 } from '@angular/core';
+
+interface ListTemplateContext<T> {
+  item: T;
+  index: number;
+}
+
+@Directive({
+  standalone: true,
+  selector: '[templateDirective]',
+})
+export class ListTemplateDirective<T> {
+  @Input({ required: true }) templateDirective!: T[];
+
+  static ngTemplateContextGuard<T>(
+    dir: ListTemplateDirective<T>,
+    ctx: any,
+  ): ctx is ListTemplateContext<T> {
+    return true;
+  }
+}
 
 @Component({
   selector: 'list',
@@ -16,7 +37,7 @@ import {
       <ng-container
         *ngTemplateOutlet="
           listTemplateRef || emptyRef;
-          context: { $implicit: item, appList: item, index: i }
+          context: { item: item, index: i }
         "></ng-container>
     </div>
 
@@ -24,9 +45,9 @@ import {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListComponent<TItem extends object> {
+export class ListComponent<TItem> {
   @Input() list!: TItem[];
 
-  @ContentChild('listRef', { read: TemplateRef })
-  listTemplateRef!: TemplateRef<unknown>;
+  @ContentChild(ListTemplateDirective, { read: TemplateRef })
+  listTemplateRef!: TemplateRef<ListTemplateContext<TItem>>;
 }

@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ListComponent } from './list.component';
+import { ListComponent, ListTemplateDirective } from './list.component';
 import { PersonComponent, PersonTemplateDirective } from './person.component';
 
 @Component({
@@ -10,6 +10,7 @@ import { PersonComponent, PersonTemplateDirective } from './person.component';
     PersonComponent,
     ListComponent,
     PersonTemplateDirective,
+    ListTemplateDirective,
   ],
   selector: 'app-root',
   template: `
@@ -20,15 +21,15 @@ import { PersonComponent, PersonTemplateDirective } from './person.component';
     </person>
 
     <list [list]="students">
-      <ng-template #listRef let-student let-i="index">
+      <ng-container *templateDirective="students; item as student; index as i">
         {{ student.name }}: {{ student.age }} - {{ i }}
-      </ng-template>
+      </ng-container>
     </list>
 
     <list [list]="cities">
-      <ng-template #listRef let-city let-i="index">
+      <ng-container *templateDirective="cities; item as city; index as i">
         {{ city.name }}: {{ city.country }} - {{ i }}
-      </ng-template>
+      </ng-container>
     </list>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
