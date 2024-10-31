@@ -1,11 +1,12 @@
-import { School } from '@angular-challenges/power-of-effect/model';
+import { PushService } from '@angular-challenges/power-of-effect/backend';
+import { isSchool, School } from '@angular-challenges/power-of-effect/model';
 import { Injectable } from '@angular/core';
 import {
   ComponentStore,
   OnStoreInit,
   tapResponse,
 } from '@ngrx/component-store';
-import { pipe, switchMap } from 'rxjs';
+import { filter, pipe, switchMap } from 'rxjs';
 import { HttpService } from '../data-access/http.service';
 
 @Injectable()
@@ -15,9 +16,13 @@ export class SchoolStore
 {
   readonly schools$ = this.select((state) => state.schools);
 
-  constructor(private httpService: HttpService) {
+  constructor(
+    private httpService: HttpService,
+    private pushService: PushService,
+  ) {
     super({ schools: [] });
   }
+  private notification$ = this.pushService.notification$;
 
   addSchool = this.updater((state, school: School) => ({
     ...state,
@@ -39,6 +44,24 @@ export class SchoolStore
           ),
         ),
       ),
+    ),
+  );
+
+  private readonly addSchools = this.effect<void>(
+    pipe(
+      switchMap(() => {
+        return this.notification$.pipe(
+          filter(Boolean),
+          tapResponse(
+            (notif) => {
+              if (isSchool(notif)) {
+                this.addSchool(notif);
+              }
+            },
+            (_) => _,
+          ),
+        );
+      }),
     ),
   );
 
